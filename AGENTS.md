@@ -6,7 +6,7 @@
 
 Flutter mobile app (Android/iOS/Web) - beads marketplace application.
 
-**Location**: `beads_market/`
+**Location**: Current working directory (`.`)
 **Flutter**: 3.41.3 (Dart 3.11.1)
 
 ---
@@ -17,17 +17,15 @@ Flutter mobile app (Android/iOS/Web) - beads marketplace application.
 
 Default (mobile device):
 ```bash
-cd beads_market
 ./scripts/run_flutter_mobile.sh
 ```
 
 For Chrome instead:
 ```bash
-cd beads_market
 ./scripts/run_flutter_chrome.sh
 ```
 
-Check logs with: `tail -f beads_market/flutter_run.log`
+Check logs with: `tail -f flutter_run.log`
 
 ---
 
@@ -36,8 +34,6 @@ Check logs with: `tail -f beads_market/flutter_run.log`
 ### Development
 
 ```bash
-cd beads_market
-
 # Run on connected device/emulator
 flutter run
 
@@ -194,17 +190,50 @@ try {
 ## Project Structure
 
 ```
-beads_market/
+. (project root)
 ├── lib/
-│   └── main.dart
+│   ├── main.dart              # App entry point, theme config (light/dark)
+│   ├── pages/
+│   │   ├── home_page.dart     # Main product listing screen
+│   │   └── checkout_page.dart # Cart checkout screen
+│   ├── models/
+│   │   └── bead_item.dart     # BeadItem data model
+│   ├── data/
+│   │   └── dummy_beads.dart   # Sample product data
+│   ├── widgets/
+│   │   └── cart.dart          # InheritedWidget for cart state
+│   └── theme/
+│       └── app_theme.dart     # Colors (light/dark variants)
 ├── scripts/
-│   ├── run_flutter_chrome.sh
-│   └── run_flutter_mobile.sh
 ├── test/
-│   └── widget_test.dart
 ├── pubspec.yaml
 └── analysis_options.yaml
 ```
+
+## Architecture
+
+### State Management
+- **Cart**: `InheritedWidget` in `lib/widgets/cart.dart` - propagates cart items to descendants
+- **HomeScreen**: `StatefulWidget` manages cart state (`_cart` list) and theme mode
+- **CheckoutPage**: Stateless widget receives cart via constructor
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `lib/main.dart` | MaterialApp setup, theme (light/dark), max content width constraint (800px) |
+| `lib/pages/home_page.dart` | Product grid, add to cart, drawer navigation |
+| `lib/pages/checkout_page.dart` | Cart review, total calculation, order placement |
+| `lib/models/bead_item.dart` | Data model: id, name, description, price, imageUrl |
+| `lib/data/dummy_beads.dart` | Sample bead products (6 items) |
+| `lib/widgets/cart.dart` | InheritedWidget - exposes cart items & total to children |
+| `lib/theme/app_theme.dart` | AppColors class with light/dark color constants |
+
+### Theme
+- Material 3 enabled
+- Light/dark mode toggle in drawer
+- Max content width: 800px (centered on large screens)
+- Helvetica font family
 
 ---
 
