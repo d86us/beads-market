@@ -61,6 +61,18 @@ flutter build ios --release
 flutter build web --release
 ```
 
+### Deployment
+
+To deploy the web app to GitHub Pages:
+
+```bash
+./scripts/deploy_web.sh
+```
+
+The app will be available at: https://d86us.github.io/beads-market/
+
+**Note:** Ensure master branch is pushed to GitHub before deploying.
+
 ### Lint & Analysis
 
 ```bash
