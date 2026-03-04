@@ -105,7 +105,7 @@ class _BeadsMarketAppState extends State<BeadsMarketApp> {
         ),
         iconTheme: const IconThemeData(
           color: AppColors.onSurfaceLight,
-          size: 24,
+          size: AppIconSizes.icon,
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
@@ -199,7 +199,7 @@ class _BeadsMarketAppState extends State<BeadsMarketApp> {
         ),
         iconTheme: const IconThemeData(
           color: AppColors.onSurfaceDark,
-          size: 24,
+          size: AppIconSizes.icon,
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(

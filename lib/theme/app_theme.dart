@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+class AppIconSizes {
+  static const double icon = 24;
+}
+
 class AppColors {
   static const primaryLight = Color(0xFF000000);
   static const onPrimaryLight = Color(0xFFFFFFFF);
