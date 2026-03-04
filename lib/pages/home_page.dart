@@ -20,6 +20,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<BeadItem> _cart = [];
+  bool _menuOpen = false;
+
+  void _toggleMenu() => setState(() => _menuOpen = !_menuOpen);
 
   void _addToCart(BeadItem item) {
     setState(() {
@@ -38,204 +41,221 @@ class _HomeScreenState extends State<HomeScreen> {
     return Cart(
       items: _cart,
       notifyParent: () => setState(() {}),
-      child: Scaffold(
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              Container(
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).padding.top + 16,
-                  left: 16,
-                  right: 16,
-                  bottom: 16,
-                ),
-                color: Theme.of(context).colorScheme.secondary,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: _toggleMenu,
+              ),
+              title: const Text('BeadsMarket'),
+              centerTitle: true,
+              actions: [
+                Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Text(
-                      'BeadsMarket',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary,
-                        fontSize: 24,
-                      ),
-                    ),
                     IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: Theme.of(context).colorScheme.onSecondary,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
+                      icon: const Icon(Icons.shopping_cart),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CheckoutPage(cart: _cart),
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.home),
-                title: const Text('Home'),
-                onTap: () => Navigator.pop(context),
-              ),
-              ListTile(
-                leading: const Icon(Icons.shopping_cart),
-                title: const Text('Cart'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CheckoutPage(cart: _cart),
-                    ),
-                  );
-                },
-              ),
-              const Divider(),
-              ListTile(
-                leading: Icon(
-                  widget.themeMode == ThemeMode.dark
-                      ? Icons.light_mode
-                      : Icons.dark_mode,
-                ),
-                title: const Text('Dark Mode'),
-                trailing: Switch(
-                  value: widget.themeMode == ThemeMode.dark,
-                  onChanged: (value) {
-                    widget.onThemeChanged(
-                      value ? ThemeMode.dark : ThemeMode.light,
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-        appBar: AppBar(
-          leading: Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () => Scaffold.of(context).openDrawer(),
-            ),
-          ),
-          title: const Text('BeadsMarket'),
-          centerTitle: true,
-          actions: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.shopping_cart),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => CheckoutPage(cart: _cart),
-                      ),
-                    );
-                  },
-                ),
-                if (_cart.isNotEmpty)
-                  Positioned(
-                    right: 8,
-                    top: 8,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '${_cart.length}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
-        body: ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: dummyBeads.length,
-          itemBuilder: (context, index) {
-            final bead = dummyBeads[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 2 / 1,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(12),
-                      ),
-                      child: Image.network(
-                        bead.imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stack) => Container(
-                          color: Theme.of(context).colorScheme.surface,
-                          child: Icon(
-                            Icons.image,
-                            color: Theme.of(context).colorScheme.onSurface,
+                    if (_cart.isNotEmpty)
+                      Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '${_cart.length}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          bead.name,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          bead.description,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withAlpha(179),
+                  ],
+                ),
+              ],
+            ),
+            body: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: dummyBeads.length,
+              itemBuilder: (context, index) {
+                final bead = dummyBeads[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 2 / 1,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(12),
+                          ),
+                          child: Image.network(
+                            bead.imageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stack) => Container(
+                              color: Theme.of(context).colorScheme.surface,
+                              child: Icon(
+                                Icons.image,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
+                            ),
+                          ),
                         ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'KSh ${bead.price.toInt()}',
-                              style: Theme.of(context).textTheme.titleLarge
+                              bead.name,
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              bead.description,
+                              style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     color: Theme.of(
                                       context,
-                                    ).colorScheme.secondary,
-                                    fontWeight: FontWeight.bold,
+                                    ).colorScheme.onSurface.withAlpha(179),
                                   ),
                             ),
-                            ElevatedButton.icon(
-                              onPressed: () => _addToCart(bead),
-                              icon: const Icon(Icons.add_shopping_cart),
-                              label: const Text('Add to Cart'),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'KSh ${bead.price.toInt()}',
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.secondary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                                ElevatedButton.icon(
+                                  onPressed: () => _addToCart(bead),
+                                  icon: const Icon(Icons.add_shopping_cart),
+                                  label: const Text('Add to Cart'),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                );
+              },
+            ),
+          ),
+          if (_menuOpen)
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _toggleMenu,
+                child: Container(color: Colors.black54),
               ),
-            );
-          },
-        ),
+            ),
+          if (_menuOpen)
+            Positioned(
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: 280,
+              child: Material(
+                child: SafeArea(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        color: Theme.of(context).colorScheme.secondary,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'BeadsMarket',
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSecondary,
+                                fontSize: 24,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.close,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSecondary,
+                              ),
+                              onPressed: _toggleMenu,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.home),
+                        title: const Text('Home'),
+                        onTap: _toggleMenu,
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.shopping_cart),
+                        title: const Text('Cart'),
+                        onTap: () {
+                          _toggleMenu();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CheckoutPage(cart: _cart),
+                            ),
+                          );
+                        },
+                      ),
+                      const Divider(),
+                      ListTile(
+                        leading: Icon(
+                          widget.themeMode == ThemeMode.dark
+                              ? Icons.light_mode
+                              : Icons.dark_mode,
+                        ),
+                        title: const Text('Dark Mode'),
+                        trailing: Switch(
+                          value: widget.themeMode == ThemeMode.dark,
+                          onChanged: (value) {
+                            widget.onThemeChanged(
+                              value ? ThemeMode.dark : ThemeMode.light,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
